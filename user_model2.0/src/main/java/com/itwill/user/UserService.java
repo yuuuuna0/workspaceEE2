@@ -6,7 +6,7 @@ package com.itwill.user;
  */
 public class UserService {
 	private UserDao userDao;
-	public UserService() throws Exception{
+	public UserService() {
 		userDao=new UserDao();
 	}
 	/*

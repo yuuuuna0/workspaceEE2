@@ -8,9 +8,13 @@ import com.itwill.user.User;
 import com.itwill.user.UserService;
 
 public class UserWriteActionController implements Controller{
-	
+	private UserService userService;
+	public UserWriteActionController() {
+		userService=new UserService();
+	}
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
+		String forwardPath="";	
 		/*
 		0  . GET방식요청일때 redirect:user_main.do  forwardPath 반환
 		1  . 요청객체 인코딩설정
@@ -20,8 +24,27 @@ public class UserWriteActionController implements Controller{
 	    5-1. 아이디중복이면  forward:WEB-INF/views/user_write_form.jsp forwardPath 반환  
 	    5-2. 가입성공이면    redirect:user_login_form.do forwardPath 반환
 	*/
-	String forwardPath="";	
-	
+		try {
+			if(request.getMethod().equalsIgnoreCase("GET")) {
+				forwardPath="redirect:user_main.do";
+			} else {
+				String userId=(String)request.getAttribute("userId");
+				String password=(String)request.getAttribute("password");
+				String name=(String)request.getAttribute("name");
+				String email=(String)request.getAttribute("email");
+				User user=new User(userId,password,name,email);
+				int rowCount=userService.create(user);
+				if(rowCount==-1) {
+					forwardPath="forward:/WEB-INF/views/user_write_form.jsp";
+				} else {
+					request.setAttribute("user", user);
+					forwardPath="redirect:user_login_form.do";
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			forwardPath="redirect:user_error.do";
+		}
 	return forwardPath;
 	}
 }
