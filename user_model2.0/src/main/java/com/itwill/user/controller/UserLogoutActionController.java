@@ -2,6 +2,7 @@ package com.itwill.user.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.itwill.summer.mvc.Controller;
 
@@ -13,7 +14,8 @@ public class UserLogoutActionController implements Controller{
 		/****************login_check*******************/
 		
 		/*********************************************/
-		
+		HttpSession session=request.getSession();
+		session.invalidate();
 		forwardPath="redirect:user_main.do";
 		return forwardPath;
 	}

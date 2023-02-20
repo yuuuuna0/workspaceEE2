@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.sql.DataSource;
 
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 /*
@@ -19,22 +18,11 @@ public class UserDao {
 	 * - DataSource객체 : Connection을 반환해주는객체
 	 * - 톰캣에서제공하는 DataSource 객체사용
 	 */
-	private DataSource dataSource;
+	private  DataSource dataSource;
 
-	public UserDao() throws Exception {
-		/******Apache BasicDataSource*****/
-		/*
-		 * jdbc.properties 파일을 Properties객체로생성
-		 */
-		BasicDataSource basicDataSource=new BasicDataSource();
-		Properties properties=new Properties();
-		properties.load(UserDao.class.getResourceAsStream("/jdbc.properties"));
-		basicDataSource.setDriverClassName(properties.getProperty("driverClassName"));
-		basicDataSource.setUrl(properties.getProperty("url"));
-		basicDataSource.setUsername(properties.getProperty("username"));
-		basicDataSource.setPassword(properties.getProperty("password"));
-		dataSource=basicDataSource;
-	}
+	public UserDao() {
+		dataSource=new DataSource();
+	}	
 
 	/*
 	 * 사용자관리테이블에 새로운사용자생성
