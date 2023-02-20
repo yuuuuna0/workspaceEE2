@@ -10,16 +10,16 @@ import com.itwill.user.UserService;
 
 public class UserViewController implements Controller{
 	private UserService userService;
-	public UserViewController() {
+	public UserViewController() throws Exception{
 		userService=new UserService();
 	}
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath="";
 		/****************login_check*******************/
-		HttpSession session=request.getSession();
-		if(session.getAttribute("sUSerId")==null) {
-			forwardPath="redirect:user_login_form.do";
+		String sUserId=(String)request.getSession().getAttribute("sUserId");
+		if(sUserId==null) {
+			forwardPath="redirect:user_main.do";
 			return forwardPath;
 		}
 		/*********************************************/
@@ -29,13 +29,12 @@ public class UserViewController implements Controller{
 		3. 반환된 User객체를 request 객체에 속성으로추가
 		*/
 		try {
-			String sUserId=(String)request.getAttribute("sUserId");
-			User user =userService.findUser(sUserId);
-			request.setAttribute("User", user);
+			User loginUser =userService.findUser(sUserId);
+			request.setAttribute("loginUser", loginUser);
 			forwardPath="forward:/WEB-INF/views/user_view.jsp";
 		} catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="redirect:user_error.do";
+			forwardPath="forward:/WEB-INF/views/user_error.jsp";
 		}
 		return forwardPath;
 	}

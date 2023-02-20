@@ -10,7 +10,7 @@ import com.itwill.user.UserService;
 
 public class UserLoginActionController implements Controller {
 	private UserService userService;
-	public UserLoginActionController() {
+	public UserLoginActionController() throws Exception{
 		userService=new UserService();
 	}
 	@Override
@@ -29,23 +29,31 @@ public class UserLoginActionController implements Controller {
 		try {
 			if(request.getMethod().equalsIgnoreCase("GET")) {
 				forwardPath="redirect:user_login_form.do";
-			} else {
-				String userId=(String)request.getAttribute("userId");
-				String password=(String)request.getAttribute("password");
-				int result=userService.login(userId, password);
-				if(result==0) {
-					forwardPath="forward:/WEB-INF/view/user_login.jsp";
-				} else if(result==1) {
-					forwardPath="forward:/WEB-INF/views/user_login.jsp";
-				} else {
-					HttpSession session=request.getSession();
-					session.setAttribute("sUserId", userId);
-					forwardPath="redirect:user_main.do";
-				}
+				return forwardPath;
+			}
+			String userId=(String)request.getAttribute("userId");
+			String password=(String)request.getAttribute("password");
+			int result=userService.login(userId, password);
+			if(result==0) {
+				User fuser=new User(userId,password,"","");
+				String msg1=userId+" 는 존재하지 않는 아이디입니다.";
+				request.setAttribute("fuser", fuser);
+				request.setAttribute("msg1", msg1);
+				forwardPath="forward:/WEB-INF/views/user_login_form.jsp";
+			} else if(result==1) {
+				String msg2="패스워드가 일치하지 않습니다.";
+				User fuser=new User(userId,password,"","");
+				request.setAttribute("fuser", fuser);
+				request.setAttribute("msg2", msg2);
+				forwardPath="forward:/WEB-INF/views/user_login_form.jsp";
+			} else if(result==2){
+				HttpSession session=request.getSession();
+				session.setAttribute("sUserId", userId);
+				forwardPath="redirect:user_main.do";
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="redirect:user_error.do";
+			forwardPath="forwardPath:/WEB-INF/views/user_error.jsp";
 		}
 		return forwardPath;
 	}

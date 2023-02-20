@@ -9,16 +9,16 @@ import com.itwill.user.UserService;
 
 public class UserRemoveActionController implements Controller {
 	private UserService userService;
-	public UserRemoveActionController() {
+	public UserRemoveActionController() throws Exception{
 		userService=new UserService();
 	}
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath = "";
 		/**************** login_check *******************/
-		HttpSession session=request.getSession();
-		if(session.getAttribute("sUserId")==null) {
-			forwardPath="redirect:user_login_form.do";
+		String sUserId=(String)request.getSession().getAttribute("sUSerID");
+		if(sUserId==null) {
+			forwardPath="redirect:user_main.do";
 			return forwardPath;
 		}
 		/*********************************************/
@@ -34,20 +34,15 @@ public class UserRemoveActionController implements Controller {
 			if(request.getMethod().equalsIgnoreCase("GET")) {
 				forwardPath="redirect:user_main.do";
 			} else {
-				String sUSerId=(String)session.getAttribute("sUserId");
+				String sUSerId=(String)request.getSession().getAttribute("sUserId");
 				int result=userService.remove(sUSerId);
-				if(result!=0) {
-					session.invalidate();
-					forwardPath="redirect:user_main.do";
-				} else {
-					forwardPath="forwardPath:/WEB-INF/views/user_error.jsp";	//세션이 null일때도 해당 에러로 포워딩?
-				}
+				request.getSession().invalidate();
+				forwardPath="redirect:user_main.do";
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="redirect:user_error.do";
+			forwardPath="forwardPath:/WEB-INF/views/user_error.jsp";
 		}
-		
 		return forwardPath;
 	}
 

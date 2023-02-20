@@ -10,15 +10,15 @@ import com.itwill.user.UserService;
 
 public class UserModifyFormController implements Controller{
 	private UserService userService;
-	public UserModifyFormController() {
+	public UserModifyFormController() throws Exception{
 		userService=new UserService();
 	}
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath="";
 		/****************login_check*******************/
-		HttpSession session=request.getSession();
-		if(session.getAttribute("sUserId")==null) {
+		String sUserId=(String)request.getSession().getAttribute("sUserId");
+		if(sUserId==null) {
 			forwardPath="redirect:user_login_form.do";
 			return forwardPath;
 		}
@@ -30,13 +30,12 @@ public class UserModifyFormController implements Controller{
 		4. forward:/WEB-INF/views/user_modify_form.jsp forwardPath를 반환
 		*/
 		try {
-			String sUSerId=(String)session.getAttribute("sUserId");
-			User user=userService.findUser(sUSerId);
+			User user=userService.findUser(sUserId);
 			request.setAttribute("user", user);
 			forwardPath="forward:/WEB-INF/views/user_modify_form.jsp";
 		}catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="redirect:user_error.do";
+			forwardPath="forward:/WEB-INF/views/user_error.jsp";
 		}
 		return forwardPath;
 	}

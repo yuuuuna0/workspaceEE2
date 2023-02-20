@@ -10,7 +10,7 @@ import com.itwill.user.UserService;
 
 public class UserModifyActionController implements Controller {
 	private UserService userService;
-	public UserModifyActionController() {
+	public UserModifyActionController() throws Exception{
 		userService=new UserService();
 	}
 	
@@ -18,9 +18,9 @@ public class UserModifyActionController implements Controller {
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath = "";
 		/**************** login_check *******************/
-		HttpSession session=request.getSession();
-		if(session.getAttribute("sUserId")==null) {
-			forwardPath="redirect:user_login_form.do";
+		String sUserId=(String)request.getSession().getAttribute("sUSerId");
+		if(sUserId==null) {
+			forwardPath="redirect:user_main.do";
 			return forwardPath;
 		}
 		/*********************************************/
@@ -36,22 +36,17 @@ public class UserModifyActionController implements Controller {
 		try {
 			if(request.getMethod().equalsIgnoreCase("GET")) {
 				forwardPath="redirect:user_main.do";
-			} else {
-				String password=(String)request.getAttribute("password");
-				String name=(String)request.getAttribute("name");
-				String email=(String)request.getAttribute("email");
-				String sUserId=(String)session.getAttribute("sUSerId");
-				User user=new User(sUserId,password,name,email);
-				int result=userService.update(user);
-				if(result!=0) {
-					forwardPath="redirect:user_view.do";
-				} else {
-					forwardPath="forward:/WEB-INF/views/user_error.jsp";
-				}
+				return forwardPath;
 			}
+			String password=(String)request.getAttribute("password");
+			String name=(String)request.getAttribute("name");
+			String email=(String)request.getAttribute("email");
+			User user=new User(sUserId,password,name,email);
+			int result=userService.update(user);
+			forwardPath="redirect:user_view.do";
 		}catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="redirect:user_error.do";
+			forwardPath="forward:/WEB-INF/views/user_error.jsp";
 		}
 		return forwardPath;
 	}
