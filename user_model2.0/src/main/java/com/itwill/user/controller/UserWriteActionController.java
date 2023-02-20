@@ -12,9 +12,9 @@ public class UserWriteActionController implements Controller{
 	public UserWriteActionController() throws Exception{
 		userService=new UserService();
 	}
+	
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
-		String forwardPath="";	
 		/*
 		0  . GET방식요청일때 redirect:user_main.do  forwardPath 반환
 		1  . 요청객체 인코딩설정
@@ -24,30 +24,34 @@ public class UserWriteActionController implements Controller{
 	    5-1. 아이디중복이면  forward:WEB-INF/views/user_write_form.jsp forwardPath 반환  
 	    5-2. 가입성공이면    redirect:user_login_form.do forwardPath 반환
 	*/
-		try {
-			if(request.getMethod().equalsIgnoreCase("GET")) {
-				forwardPath="redirect:user_main.do";
-				return forwardPath;	//언제 return 써도 되고 안써도 될까?
-			}
-			String userId=(String)request.getAttribute("userId");
-			String password=(String)request.getAttribute("password");
-			String name=(String)request.getAttribute("name");
-			String email=(String)request.getAttribute("email");
-			User user=new User(userId,password,name,email);
-			int result=userService.create(user);
-			if(result==-1) {
-				forwardPath="forward:/WEB-INF/views/user_write_form.jsp";
-				String msg=userId+"는 이미 존재하는 아이디입니다.";
-				request.setAttribute("msg", msg);
-				request.setAttribute("fuser", user);
-			} else if(result==1){
-				request.setAttribute("user", user);
-				forwardPath="redirect:user_login_form.do";
-			}
-		}catch (Exception e) {
-			e.printStackTrace();
-			forwardPath="forward:/WEB-INF/views/user_error.jsp";	//왜 redirect가 아니고 forward지?
+	String forwardPath="";
+	try {
+		if(request.getMethod().equalsIgnoreCase("GET")) {
+			forwardPath="redirect:user_main.do";
+			return forwardPath;
 		}
+		String userId=request.getParameter("userId");
+		String password=request.getParameter("password");
+		String name=request.getParameter("name");
+		String email=request.getParameter("email");
+		User newUser=new User(userId, password, name, email);
+		int result = userService.create(newUser);
+		if(result==-1) {
+			String msg=userId+" 는 이미존재하는 아이디입니다.";
+			request.setAttribute("msg",msg);
+			request.setAttribute("fuser",newUser);
+			forwardPath="forward:/WEB-INF/views/user_write_form.jsp";
+		}else if(result==1) {
+			forwardPath="redirect:user_login_form.do";
+		}
+		
+		
+		
+	}catch (Exception e) {
+		e.printStackTrace();
+		forwardPath="forward:/WEB-INF/views/user_error.jsp";
+	}
+
 	return forwardPath;
 	}
 }

@@ -2,7 +2,6 @@ package com.itwill.user.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.itwill.summer.mvc.Controller;
 import com.itwill.user.User;
@@ -13,16 +12,12 @@ public class UserModifyActionController implements Controller {
 	public UserModifyActionController() throws Exception{
 		userService=new UserService();
 	}
-	
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath = "";
+		String sUserId=(String)request.getSession().getAttribute("sUserId");
 		/**************** login_check *******************/
-		String sUserId=(String)request.getSession().getAttribute("sUSerId");
-		if(sUserId==null) {
-			forwardPath="redirect:user_main.do";
-			return forwardPath;
-		}
+		
 		/*********************************************/
 		/*
 		0.login 여부체크
@@ -38,17 +33,26 @@ public class UserModifyActionController implements Controller {
 				forwardPath="redirect:user_main.do";
 				return forwardPath;
 			}
-			String password=(String)request.getAttribute("password");
-			String name=(String)request.getAttribute("name");
-			String email=(String)request.getAttribute("email");
-			User user=new User(sUserId,password,name,email);
-			int result=userService.update(user);
+			String password=request.getParameter("password");
+			String name=request.getParameter("name");
+			String email=request.getParameter("email");
+			int updateRowCount = userService.update(new User(sUserId, password, name, email));
 			forwardPath="redirect:user_view.do";
 		}catch (Exception e) {
 			e.printStackTrace();
 			forwardPath="forward:/WEB-INF/views/user_error.jsp";
+			
 		}
 		return forwardPath;
 	}
 
 }
+
+
+
+
+
+
+
+
+

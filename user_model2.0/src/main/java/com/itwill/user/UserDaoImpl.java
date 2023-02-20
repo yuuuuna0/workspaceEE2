@@ -14,21 +14,21 @@ import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
  사용자관리에서 데이타베이스와의 작업을 전담하는 클래스
  USERINFO 테이블에 사용자를 추가,삭제,검색,수정등의 작업을한다.
  */
-public class UserDao {
+public class UserDaoImpl {
 	/*
 	 * - DataSource객체 : Connection을 반환해주는객체
 	 * - 톰캣에서제공하는 DataSource 객체사용
 	 */
 	private DataSource dataSource;
 
-	public UserDao() throws Exception {
+	public UserDaoImpl() throws Exception {
 		/******Apache BasicDataSource*****/
 		/*
 		 * jdbc.properties 파일을 Properties객체로생성
 		 */
 		BasicDataSource basicDataSource=new BasicDataSource();
 		Properties properties=new Properties();
-		properties.load(UserDao.class.getResourceAsStream("/jdbc.properties"));
+		properties.load(UserDaoImpl.class.getResourceAsStream("/jdbc.properties"));
 		basicDataSource.setDriverClassName(properties.getProperty("driverClassName"));
 		basicDataSource.setUrl(properties.getProperty("url"));
 		basicDataSource.setUsername(properties.getProperty("username"));

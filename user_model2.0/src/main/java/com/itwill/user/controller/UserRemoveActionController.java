@@ -2,7 +2,6 @@ package com.itwill.user.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.itwill.summer.mvc.Controller;
 import com.itwill.user.UserService;
@@ -15,12 +14,8 @@ public class UserRemoveActionController implements Controller {
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath = "";
+		String sUserId=(String)request.getSession().getAttribute("sUserId");
 		/**************** login_check *******************/
-		String sUserId=(String)request.getSession().getAttribute("sUSerID");
-		if(sUserId==null) {
-			forwardPath="redirect:user_main.do";
-			return forwardPath;
-		}
 		/*********************************************/
 		/*
 		0.login 여부체크
@@ -31,19 +26,30 @@ public class UserRemoveActionController implements Controller {
 		  실패: forward:/WEB-INF/views/user_error.jsp  forwardPath반환
 		*/
 		try {
-			if(request.getMethod().equalsIgnoreCase("GET")) {
+			if(request.getMethod().equalsIgnoreCase(sUserId)) {
 				forwardPath="redirect:user_main.do";
-			} else {
-				String sUSerId=(String)request.getSession().getAttribute("sUserId");
-				int result=userService.remove(sUSerId);
-				request.getSession().invalidate();
-				forwardPath="redirect:user_main.do";
+				return forwardPath;
 			}
+			int result=userService.remove(sUserId);
+			request.getSession().invalidate();
+			forwardPath="redirect:user_main.do";
 		}catch (Exception e) {
 			e.printStackTrace();
-			forwardPath="forwardPath:/WEB-INF/views/user_error.jsp";
+			forwardPath="forward:/WEB-INF/views/user_error.jsp";
 		}
 		return forwardPath;
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

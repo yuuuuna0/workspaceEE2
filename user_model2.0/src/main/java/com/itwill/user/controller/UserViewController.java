@@ -2,7 +2,6 @@ package com.itwill.user.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.itwill.summer.mvc.Controller;
 import com.itwill.user.User;
@@ -16,12 +15,8 @@ public class UserViewController implements Controller{
 	@Override
 	public String handleRequest(HttpServletRequest request, HttpServletResponse response) {
 		String forwardPath="";
-		/****************login_check*******************/
 		String sUserId=(String)request.getSession().getAttribute("sUserId");
-		if(sUserId==null) {
-			forwardPath="redirect:user_main.do";
-			return forwardPath;
-		}
+		/****************login_check*******************/
 		/*********************************************/
 		/*
 		1. UserService객체생성
@@ -29,10 +24,10 @@ public class UserViewController implements Controller{
 		3. 반환된 User객체를 request 객체에 속성으로추가
 		*/
 		try {
-			User loginUser =userService.findUser(sUserId);
+			User loginUser=userService.findUser(sUserId);
 			request.setAttribute("loginUser", loginUser);
 			forwardPath="forward:/WEB-INF/views/user_view.jsp";
-		} catch (Exception e) {
+		}catch (Exception e) {
 			e.printStackTrace();
 			forwardPath="forward:/WEB-INF/views/user_error.jsp";
 		}

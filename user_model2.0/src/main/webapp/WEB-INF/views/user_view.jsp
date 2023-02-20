@@ -80,14 +80,14 @@
 									<tr>
 										<td width=100 align=center bgcolor="E6ECDE" height="22">이름</td>
 										<td width=490 bgcolor="ffffff" style="padding-left: 10">
-											${loginUser.password}
+											${loginUser.name}
 										</td>
 									</tr>
 									<tr>
 										<td width=100 align=center bgcolor="E6ECDE" height="22">이메일
 											주소</td>
 										<td width=490 bgcolor="ffffff" style="padding-left: 10">
-											${loginUser.email}
+											${loginUser.email }
 										</td>
 									</tr>
 								</table>
